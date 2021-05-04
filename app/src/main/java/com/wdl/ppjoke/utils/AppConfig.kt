@@ -1,6 +1,7 @@
 package com.wdl.ppjoke.utils
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.wdl.ppjoke.model.Destination
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -13,8 +14,10 @@ object AppConfig {
     private var sConfig: HashMap<String, Destination>? = null
 
     fun getDestinationConfig(): HashMap<String, Destination>? {
-        if(sConfig == null){
-            sConfig = Gson().fromJson(parseFile("destination.json"),HashMap::class.java) as HashMap<String, Destination>?
+        if (sConfig == null) {
+            sConfig = Gson().fromJson(parseFile("destination.json"),
+                object : TypeToken<HashMap<String, Destination>>() {}.type
+            )
         }
 
         return sConfig
