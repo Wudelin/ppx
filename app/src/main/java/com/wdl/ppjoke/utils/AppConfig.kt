@@ -2,6 +2,7 @@ package com.wdl.ppjoke.utils
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.wdl.ppjoke.model.BottomBar
 import com.wdl.ppjoke.model.Destination
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -13,14 +14,24 @@ import java.lang.StringBuilder
 object AppConfig {
     private var sConfig: HashMap<String, Destination>? = null
 
+    private var sBottomBar: BottomBar? = null
+
     fun getDestinationConfig(): HashMap<String, Destination>? {
         if (sConfig == null) {
-            sConfig = Gson().fromJson(parseFile("destination.json"),
+            sConfig = Gson().fromJson(
+                parseFile("destination.json"),
                 object : TypeToken<HashMap<String, Destination>>() {}.type
             )
         }
 
         return sConfig
+    }
+
+    fun getBottomBarConfig(): BottomBar? {
+        if (sBottomBar == null) {
+            sBottomBar = Gson().fromJson(parseFile("main_tabs_config.json"), BottomBar::class.java)
+        }
+        return sBottomBar
     }
 
 

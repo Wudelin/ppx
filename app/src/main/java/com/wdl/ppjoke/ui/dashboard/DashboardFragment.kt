@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.wdl.libnavannotation.FragmentDestination
 import com.wdl.ppjoke.R
 
-@FragmentDestination(pageUrl = "main/tabs/dashboard")
+@FragmentDestination(pageUrl = "main/tabs/sofa")
 class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel

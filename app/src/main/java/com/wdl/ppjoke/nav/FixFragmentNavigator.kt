@@ -13,7 +13,7 @@ import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
 import java.lang.reflect.Field
 
-@Navigator.Name("fixfragment")
+@Navigator.Name("fragment")
 class FixFragmentNavigator(
     private val mContext: Context,
     private val mManager: FragmentManager,
@@ -74,11 +74,11 @@ class FixFragmentNavigator(
         ft.setPrimaryNavigationFragment(frag)
 
         @IdRes val destId = destination.id
-        var mBackStack: ArrayDeque<Int> = ArrayDeque()
+        var mBackStack: java.util.ArrayDeque<Int> = java.util.ArrayDeque<Int>()
         try {
             val field: Field = FragmentNavigator::class.java.getDeclaredField("mBackStack")
             field.isAccessible = true
-            mBackStack = field.get(this) as ArrayDeque<Int>
+            mBackStack = field.get(this) as java.util.ArrayDeque<Int>
         } catch (e: NoSuchFieldException) {
             e.printStackTrace()
         } catch (e: IllegalAccessException) {
@@ -88,7 +88,7 @@ class FixFragmentNavigator(
         val initialNavigation = mBackStack.isNullOrEmpty()
         val isSingleTopReplacement = (navOptions != null && !initialNavigation
                 && navOptions.shouldLaunchSingleTop()
-                && mBackStack.last() === destId)
+                && mBackStack.peekLast() === destId)
 
         val isAdded: Boolean = when {
             initialNavigation -> {
@@ -102,7 +102,7 @@ class FixFragmentNavigator(
                     // remove it from the back stack and put our replacement
                     // on the back stack in its place
                     mManager.popBackStack(
-                        generateBackStackName(mBackStack.size, mBackStack.last()),
+                        generateBackStackName(mBackStack.size, mBackStack.peekLast()),
                         FragmentManager.POP_BACK_STACK_INCLUSIVE
                     )
                     ft.addToBackStack(generateBackStackName(mBackStack.size, destId))
