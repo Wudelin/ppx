@@ -5,13 +5,13 @@ import androidx.navigation.ActivityNavigator
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.NavGraphNavigator
-import androidx.navigation.fragment.FragmentNavigator
+import com.wdl.ppjoke.nav.FixFragmentNavigator
 
 object NavGraphBuilder {
     fun build(controller: NavController) {
         val navigatorProvider = controller.navigatorProvider
         // 获取fragment Nav
-        val fragNavigator = navigatorProvider.getNavigator(FragmentNavigator::class.java)
+        val fragNavigator = navigatorProvider.getNavigator(FixFragmentNavigator::class.java)
         // 获取activity Nav
         val activityNavigator = navigatorProvider.getNavigator(ActivityNavigator::class.java)
         // 创建nav
