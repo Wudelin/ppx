@@ -22,6 +22,7 @@ class FindFragment : Fragment() {
 
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
+        textView.text = "FindFragment"
         return root
     }
 }
