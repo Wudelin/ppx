@@ -1,11 +1,14 @@
 package com.wdl.libnetwork
 
+import android.util.Log
 import androidx.annotation.IntDef
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+import java.lang.Exception
 import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 
 
 @Suppress("UNCHECKED_CAST")
@@ -17,6 +20,9 @@ abstract class Request<T, R : Request<T, R>> constructor(protected var url: Stri
     protected val mParams = HashMap<String, Any>()
 
     private var cacheKey: String? = null
+
+    protected var mRespType: Type? = null
+    protected var mClass: Class<T>? = null
 
     companion object {
         // 只访问缓存
@@ -54,47 +60,89 @@ abstract class Request<T, R : Request<T, R>> constructor(protected var url: Stri
     /**
      * callback为空时代表同步，否则代表异步
      */
-    fun execute(callback: JsonCallback<T>? = null) {
+    fun execute(callback: JsonCallback<T>) {
         val call = getCall()
-        if (callback == null) {
+        call.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                val resp = ApiResponse<T>()
+                resp.message = e.message
+                callback.onError(resp)
+            }
 
-        } else {
-            call.enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    val resp = ApiResponse<T>()
-                    resp.message = e.message
+            override fun onResponse(call: Call, response: Response) {
+                val resp = parseResp(response, callback)
+                if (resp.success) {
                     callback.onError(resp)
+                } else {
+                    callback.onSuccess(resp)
                 }
+            }
 
-                override fun onResponse(call: Call, response: Response) {
-                    val resp = parseResp(response, callback)
-                    if (resp.success) {
-                        callback.onError(resp)
+        })
+    }
+
+    /**
+     * 同步执行
+     */
+    fun execute(): ApiResponse<T>? {
+        val call = getCall()
+        try {
+            val response = call.execute()
+            return parseResp(response, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    private fun parseResp(response: Response, callback: JsonCallback<T>?): ApiResponse<T> {
+        var message: String? = null
+        val status = response.code
+        var success = response.isSuccessful
+        val result = ApiResponse<T>()
+        val convert = ApiService.sConvert
+        try {
+            val content = response.body?.string()
+            if (success) {
+                if (!content.isNullOrEmpty()) {
+                    if (callback != null) {
+                        // 获取泛型类型
+                        val paramsType: ParameterizedType =
+                            callback.javaClass.genericSuperclass as ParameterizedType
+                        val type = paramsType.actualTypeArguments[0]
+                        result.data = convert.convert(content, type) as T?
+                    } else if (mRespType != null) {
+                        result.data = convert.convert(content, mRespType!!) as T?
+                    } else if (mClass != null) {
+                        result.data = convert.convert(content, mClass!!) as T?
                     } else {
-                        callback.onSuccess(resp)
+                        Log.e("TAG", "type is null")
                     }
                 }
-
-            })
+            } else {
+                message = content
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            message = e.message
+            success = false
         }
-
+        result.message = message
+        result.status = status
+        result.success = success
+        return result
 
     }
 
-    private fun parseResp(response: Response, callback: JsonCallback<T>): ApiResponse<T> {
-        var message: String? = null
-        val status = response.code
-        val success = response.isSuccessful
-        if (success) {
-            val content = response.body?.string()
-            // 获取泛型类型
-            val paramsType: ParameterizedType =
-                callback.javaClass.genericSuperclass as ParameterizedType
-            val type = paramsType.actualTypeArguments[0]
+    // 同步执行时无法获取返回值类型时通过手动设置
+    fun responseType(type: Type): R {
+        this.mRespType = type
+        return this as R
+    }
 
-        }
-        return ApiResponse<T>()
-
+    fun responseType(clazz: Class<T>): R {
+        this.mClass = clazz
+        return this as R
     }
 
     private fun getCall(): Call {
