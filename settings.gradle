@@ -3,3 +3,4 @@ include ':libnavannotation'
 include ':app'
 rootProject.name = "ppjoke"
 include ':libnetwork'
+include ':libcommon'

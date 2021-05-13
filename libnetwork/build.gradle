@@ -16,6 +16,16 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        javaCompileOptions {
+//            kaptOptions
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
     }
 
     buildTypes {
@@ -57,4 +67,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
 
     implementation 'com.alibaba:fastjson:1.2.59'
+
+    compileOnly project(":libcommon")
 }
