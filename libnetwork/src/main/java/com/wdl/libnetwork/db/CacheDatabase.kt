@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.wdl.libcommon.AppGlobals
 import com.wdl.libnetwork.db.bean.Cache
 
-@Database(entities = [Cache::class], version = 1, exportSchema = true)
+@Database(entities = [Cache::class], version = 1, exportSchema = false)
 abstract class CacheDatabase : RoomDatabase() {
     companion object {
         private val db: CacheDatabase

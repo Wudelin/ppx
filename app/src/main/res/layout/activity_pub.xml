@@ -7,9 +7,12 @@
     android:paddingTop="?attr/actionBarSize">
 
     <TextView
-        android:text="PubActivity"
-        android:gravity="center"
+        android:id="@+id/tv_test"
+        android:background="@android:color/holo_blue_bright"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:text="PubActivity"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,14 +17,21 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 
+
         javaCompileOptions {
+//            kapt {
+//                arguments += [
+//                        "room.schemaLocation"  : "$projectDir/schemas".toString(),
+//                        "room.incremental"     : "true",
+//                        "room.expandProjection": "true"]
+//            }
 //            kaptOptions
-            annotationProcessorOptions {
-                arguments += [
-                        "room.schemaLocation":"$projectDir/schemas".toString(),
-                        "room.incremental":"true",
-                        "room.expandProjection":"true"]
-            }
+//            annotationPOptions {
+//                arguments += [
+//                        "room.schemaLocation":"$projectDir/schemas".toString(),
+//                        "room.incremental":"true",
+//                        "room.expandProjection":"true"]
+//            }
         }
     }
 
@@ -58,13 +65,13 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
 
     //room数据库
-    implementation "androidx.room:room-runtime:2.2.5"
-    kapt "androidx.room:room-compiler:2.2.5" // Kotlin 使用 kapt
-    implementation "androidx.room:room-ktx:2.2.5"//Coroutines support for Room 协程操作库
+    implementation "androidx.room:room-runtime:2.3.0"
+    kapt "androidx.room:room-compiler:2.3.0" // Kotlin 使用 kapt
+    implementation "androidx.room:room-ktx:2.3.0"//Coroutines support for Room 协程操作库
 
     //lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
 
     implementation 'com.alibaba:fastjson:1.2.59'
 
